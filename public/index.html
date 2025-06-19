@@ -30,6 +30,19 @@
   const input = document.getElementById('input');
   const messages = document.getElementById('messages');
 
+  // Guess device name and send it to the server
+  const userAgent = navigator.userAgent;
+  const guessedName = getDeviceName(userAgent);
+  socket.emit('register', guessedName);
+
+  function getDeviceName(ua) {
+    if (ua.includes("iPhone")) return "iPhone User";
+    if (ua.includes("Android")) return "Android User";
+    if (ua.includes("Windows")) return "Windows User";
+    if (ua.includes("Macintosh")) return "Mac User";
+    return "Guest";
+  }
+
   form.addEventListener('submit', function(e) {
     e.preventDefault();
     if (input.value.trim()) {
