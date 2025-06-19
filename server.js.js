@@ -1,27 +1,17 @@
-const express = require('express');
-const http = require('http');
-const socketIO = require('socket.io');
+io.on('connection', (socket) => {
+  console.log('A user connected');
 
-const app = express();
-const server = http.createServer(app);
-const io = socketIO(server);
+  socket.on('register', (name) => {
+    socket.username = name;
+    console.log(`User registered as: ${name}`);
+  });
 
-// Serve static files (index.html) from "public" folder
-app.use(express.static('public'));
+  socket.on('chat message', (msg) => {
+    const displayName = socket.username || 'Anonymous';
+    io.emit('chat message', `${displayName}: ${msg}`);
+  });
 
-io.on('connection', socket => {
-    console.log('A user connected');
-
-    socket.on('chat message', msg => {
-        io.emit('chat message', msg); // Send to all clients
-    });
-
-    socket.on('disconnect', () => {
-        console.log('A user disconnected');
-    });
-});
-
-const PORT = process.env.PORT || 3000;
-server.listen(PORT, () => {
-    console.log(`Server running at http://localhost:${PORT}`);
+  socket.on('disconnect', () => {
+    console.log('A user disconnected');
+  });
 });
